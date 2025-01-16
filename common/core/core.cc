@@ -16,6 +16,8 @@
 #include "stats.h"
 #include "topology_info.h"
 #include "cheetah_manager.h"
+#include "magic_server.h"
+#include "perceptron_freq_predictor.h"
 
 #include <cstring>
 
@@ -195,6 +197,23 @@ Core::accessBranchPredictor(IntPtr eip, bool taken, bool indirect, IntPtr target
 {
    PerformanceModel *prfmdl = getPerformanceModel();
    BranchPredictor *bp = prfmdl->getBranchPredictor();
+
+   PerceptronFreqPredictor *pfp = prfmdl->getPerceptronFreqPredictor();
+
+   if (pfp) {
+     bool freqPrediction = pfp->predict(eip);
+	 pfp->update(freqPrediction, taken, eip);
+
+     std::cout << "Accuracy => " << (float)pfp->m_correct_predictions/(pfp->m_correct_predictions + pfp->m_incorrect_predictions) << std::endl;
+     std::cout << "Correct Predictions  => " << pfp->m_correct_predictions << std::endl;
+     std::cout << "Incorrect Predictions  => " << pfp->m_incorrect_predictions << std::endl;
+
+     if (freqPrediction) {
+       Sim()->getMagicServer()->setFrequency(m_core_id, PerceptronFreqPredictor::HIGH_FREQUENCY);
+     } else {
+        Sim()->getMagicServer()->setFrequency(m_core_id, PerceptronFreqPredictor::LOW_FREQUENCY);
+     }
+   }
 
    if (bp)
    {

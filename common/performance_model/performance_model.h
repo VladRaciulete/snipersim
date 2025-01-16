@@ -8,6 +8,7 @@
 #include "subsecond_time.h"
 #include "instruction_tracer.h"
 #include "hit_where.h"
+#include "perceptron_freq_predictor.h"
 
 #include <queue>
 #include <iostream>
@@ -46,6 +47,8 @@ public:
 
    BranchPredictor *getBranchPredictor() { return m_bp; }
    BranchPredictor const* getConstBranchPredictor() const { return m_bp; }
+
+   PerceptronFreqPredictor *getPerceptronFreqPredictor() { return m_pfp; }
 
    FastforwardPerformanceModel *getFastforwardPerformanceModel() { return m_fastforward_model; }
    FastforwardPerformanceModel const* getFastforwardPerformanceModel() const { return m_fastforward_model; }
@@ -150,6 +153,8 @@ private:
    BranchPredictor *m_bp;
 
    InstructionTracer *m_instruction_tracer;
+
+   PerceptronFreqPredictor *m_pfp;
 };
 
 #endif

@@ -70,6 +70,10 @@ PerformanceModel::PerformanceModel(Core *core)
 
    m_instruction_tracer = InstructionTracer::create(core);
 
+   if (Sim()->getCfg()->getIntArray("perf_model/perceptron_freq_predictor/perceptron_table_size", core->getId())) {
+     m_pfp = PerceptronFreqPredictor::create(core->getId());
+   }
+
    registerStatsMetric("performance_model", core->getId(), "instruction_count", &m_instruction_count);
 
    registerStatsMetric("performance_model", core->getId(), "elapsed_time", &m_elapsed_time);
